@@ -1,6 +1,9 @@
 package main
 
-import "github.com/WillCoates/FYP/common/model"
+import (
+	"github.com/WillCoates/FYP/common/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 /*
 Meshlium payload:
@@ -22,6 +25,7 @@ type SensorPayload struct {
 }
 
 func (this *SensorPayload) ToSensorData() (data model.SensorData) {
+	data.Id = primitive.NewObjectID()
 	data.MessageId = this.MessageId
 	data.UnitId = this.UnitId
 	data.Sensor = this.Sensor
