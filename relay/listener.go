@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -26,9 +27,17 @@ func listener(connection *amqp.Connection, collection *mongo.Collection) {
 			fmt.Println(err)
 			msg.Nack(false, false) // Discard
 		} else {
-
-			msg.Ack(false)
-			msg.Nack(false, true) // Requeue
+			data := payload.ToSensorData()
+			// data.User
+			data.User = "foobar"
+			_, err = collection.InsertOne(context.Background(), data)
+			if err != nil {
+				fmt.Println("Failed to store data")
+				fmt.Println(err)
+				msg.Nack(false, true) // Requeue
+			} else {
+				msg.Ack(false)
+			}
 		}
 	}
 }

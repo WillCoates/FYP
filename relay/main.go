@@ -30,13 +30,13 @@ func prepareMessageQueue(connection *amqp.Connection) error {
 		return err
 	}
 
-	err = ch.QueueBind("sensors", "*.sensor.#", "amqp.topic", false, nil)
+	err = ch.QueueBind("sensors", "*.sensor.#", "amq.topic", false, nil)
 	return err
 }
 
 func main() {
 	// TODO: Load configuration
-	db, err := mongo.NewClient(options.Client().ApplyURI("mongodb://admin:6Kp?VbAcs\"@docker:27017"))
+	db, err := mongo.NewClient(options.Client().ApplyURI("mongodb://relay:Y&q&tdPuX2G1_4G8@docker:27017"))
 	checkError(err, "Failed to create MongoDB client")
 
 	dbctx, dbcancel := context.WithTimeout(context.Background(), 20*time.Second)
