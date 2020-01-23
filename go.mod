@@ -1,10 +1,9 @@
-module github.com/WillCoates/FYP/relay
+module github.com/WillCoates/FYP
 
 go 1.13
 
 require (
 	github.com/DataDog/zstd v1.4.4 // indirect
-	github.com/WillCoates/FYP/common v0.0.0-20200123140511-e6d38f7a9ab3
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.4.0 // indirect
