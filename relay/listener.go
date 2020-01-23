@@ -46,16 +46,17 @@ func listener(connection *amqp.Connection, collection *mongo.Collection) {
 			msg.Nack(false, false) // Discard
 		} else {
 			data := payload.ToSensorData()
-			// data.User
 			data.User = topicData[1]
 			_, err = collection.InsertOne(context.Background(), data)
 			if err != nil {
-				log.Fatalln("Failed to store data")
-				log.Fatalln(err)
+				log.Println("Failed to store data")
+				log.Println(err)
 				msg.Nack(false, true) // Requeue
 			} else {
 				msg.Ack(false)
 			}
 		}
 	}
+
+	log.Println("Server stopped sending messages")
 }
