@@ -17,17 +17,17 @@ Meshlium payload:
 */
 
 type SensorPayload struct {
-	MessageId string `json:"msg_id"`
-	UnitId    string `json:"unit_id"`
+	MessageID string `json:"msg_id"`
+	UnitID    string `json:"unit_id"`
 	Sensor    string `json:"sensor"`
 	Value     string `json:"value"`
 	Timestamp int64  `json:"timestamp"`
 }
 
 func (this *SensorPayload) ToSensorData() (data model.SensorData) {
-	data.Id = primitive.NewObjectID()
-	data.MessageId = this.MessageId
-	data.UnitId = this.UnitId
+	data.ID = primitive.NewObjectID()
+	data.MessageID = this.MessageID
+	data.UnitID = this.UnitID
 	data.Sensor = this.Sensor
 	data.Value = this.Value
 	data.Timestamp = this.Timestamp
