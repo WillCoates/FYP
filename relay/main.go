@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/streadway/amqp"
@@ -66,7 +68,28 @@ func main() {
 */
 
 func main() {
-	db, err := mongo.NewClient(options.Client().ApplyURI("mongodb://relay:Y&q&tdPuX2G1_4G8@docker:27017"))
+	mongoURL := os.Getenv("MONGO_URL")
+	if mongoURL == "" {
+		mongoURL = "mongodb://relay:Y&q&tdPuX2G1_4G8@docker:27017"
+	}
+
+	amqpURL := os.Getenv("AMQP_URL")
+	if amqpURL == "" {
+		amqpURL = "amqp://docker:5672/"
+	}
+
+	numListenersStr := os.Getenv("LISTENERS")
+	if numListenersStr == "" {
+		numListenersStr = "1"
+	}
+
+	numListeners, err := strconv.Atoi(numListenersStr)
+	if err != nil {
+		log.Println("Error reading config: Invalid number of listeners")
+		log.Fatalln(err)
+	}
+
+	db, err := mongo.NewClient(options.Client().ApplyURI(mongoURL))
 	if err != nil {
 		log.Println("Failed to create MongoDB client")
 		log.Fatalln(err)
@@ -86,7 +109,7 @@ func main() {
 	for {
 		var amqpConnection *amqp.Connection
 		for {
-			amqpConnection, err = amqp.Dial("amqp://docker:5672/")
+			amqpConnection, err = amqp.Dial(amqpURL)
 			if err != nil {
 				log.Println("Failed to connect to RabbitMQ")
 				log.Println(err)
@@ -104,7 +127,7 @@ func main() {
 			log.Fatalln(err)
 		}
 
-		for i := 0; i < 1; i++ {
+		for i := 0; i < numListeners; i++ {
 			go listener(amqpConnection, collection)
 		}
 

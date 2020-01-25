@@ -1,5 +1,7 @@
 FROM golang:1.13.6-alpine
 
+RUN apk add --no-cache gcc musl-dev
+
 WORKDIR /go/src/app
 COPY . .
 
