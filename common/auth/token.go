@@ -19,20 +19,20 @@ type Token struct {
 
 var tokenSeperator = []byte{'.'}
 
-func ParseToken(raw []byte, keys map[string]*ecdsa.PublicKey) (Token, error) {
-	var token Token
+func ParseToken(raw []byte, keys map[string]*ecdsa.PublicKey) (*Token, error) {
+	token := new(Token)
 	var headerRaw, payloadRaw, signatureRaw []byte
 	var header, payload, signature []byte
 
 	headerEnd := bytes.Index(raw, tokenSeperator)
 	if headerEnd == -1 {
-		return token, errors.New("Missing seperator (header)")
+		return nil, errors.New("Missing seperator (header)")
 	}
 
 	payloadEnd := bytes.Index(raw[headerEnd+1:], tokenSeperator)
 
 	if payloadEnd == -1 {
-		return token, errors.New("Missing seperator (payload)")
+		return nil, errors.New("Missing seperator (payload)")
 	}
 
 	payloadEnd += headerEnd + 1
@@ -47,33 +47,33 @@ func ParseToken(raw []byte, keys map[string]*ecdsa.PublicKey) (Token, error) {
 
 	_, err := base64.RawURLEncoding.Decode(header, headerRaw)
 	if err != nil {
-		return token, err
+		return nil, err
 	}
 
 	_, err = base64.RawURLEncoding.Decode(payload, payloadRaw)
 	if err != nil {
-		return token, err
+		return nil, err
 	}
 
 	_, err = base64.RawURLEncoding.Decode(signature, signatureRaw)
 	if err != nil {
-		return token, err
+		return nil, err
 	}
 
 	err = json.Unmarshal(header, &token.Header)
 	if err != nil {
-		return token, err
+		return nil, err
 	}
 
 	err = json.Unmarshal(payload, &token.Payload)
 	if err != nil {
-		return token, err
+		return nil, err
 	}
 
 	key, keyFound := keys[token.Header.KeyID]
 
 	if !keyFound {
-		return token, errors.New("Unknown key ID")
+		return nil, errors.New("Unknown key ID")
 	}
 
 	var hash []byte
@@ -98,11 +98,11 @@ func ParseToken(raw []byte, keys map[string]*ecdsa.PublicKey) (Token, error) {
 		s.SetBytes(signature[64:])
 
 	default:
-		return token, errors.New("Unsupported algorithm")
+		return nil, errors.New("Unsupported algorithm")
 	}
 
 	if !ecdsa.Verify(key, hash, &r, &s) {
-		return token, errors.New("Failed to verify signature")
+		return nil, errors.New("Failed to verify signature")
 	}
 
 	return token, nil

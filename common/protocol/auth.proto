@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+message UserDetails {
+    string emailAddress = 1;
+    string name = 2;
+}
+
+message Token {
+    string token = 1;
+}
+
+message Permission {
+    string permission = 1;
+    string for = 2;
+}
+
+message AuthenticateRequest {
+    string emailAddress = 1;
+    string password = 2;
+    string audience = 3;
+    uint32 duration = 4;
+}
+
+message AuthenticateResponse {
+    bool success = 1 [deprecated=true];
+    Token token = 2;
+}
+
+message InvalidateTokenResponse {
+    bool success = 1;
+}
+
+message TokenValidResponse {
+    bool valid = 1;
+}
+
+message RegistrationRequest {
+    string emailAddress = 1;
+    string password = 2;
+    string name = 3;
+}
+
+message RegistrationResponse {
+    bool success = 1;
+}
+
+service AuthService {
+    rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse);
+    rpc GetTokenPermissions(Token) returns (stream Permission);
+    rpc IsTokenValid(Token) returns (TokenValidResponse);
+    rpc InvalidateToken(Token) returns (InvalidateTokenResponse);
+    rpc Register(RegistrationRequest) returns (RegistrationResponse);
+}
