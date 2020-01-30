@@ -1,0 +1,66 @@
+{{ define "login" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.1/css/foundation.min.css" integrity="sha384-Bu0ub28kcl6HYTYOztakXlHnFhxLf10qnQMFk/g5oZwiD8eZSJrUNMB7mrGE84CZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/login.css">
+</head>
+<body>
+    <div class="grid-container">
+        <div id="login" class="grid-x">
+            <form id="login-form" class="cell" method="POST">
+                <h1>Login</h1>
+                <div id="login-errors">
+                    {{ if ne .LoginError "" }}
+                    <div class="callout alert" data-alert>
+                        {{ .LoginError }}
+                    </div>
+                    {{ end }}
+                </div>
+                <label>Email Address
+                    <input type="email" name="email"  value="{{ .LoginEmail }}" required>
+                </label>
+                <label>Password
+                    <input type="password" name="password" required>
+                </label>
+                <input type="submit" name="submit" value="Login" class="button" id="login-submit">
+                <p>Don't have an account? <a href="#register" id="register-link">Register</a></p>
+            </form>
+        </div>
+        <div id="register" class="grid-x">
+            <form id="register-form" class="cell" method="POST">
+                <h1>Register</h1>
+                <div id="register-errors">
+                    {{ if ne .RegisterError "" }}
+                    <div class="callout alert" data-alert>
+                        {{ .RegisterError }}
+                    </div>
+                    {{ end }}
+                </div>
+                <label>Email Address
+                    <input type="email" name="email" value="{{ .RegisterEmail }}" required>
+                </label>
+                <label>Full Name
+                    <input type="text" name="name" value="{{ .RegisterName }}" required>
+                </label>
+                <label>Password
+                    <input type="password" name="password" required>
+                </label>
+                <label>Confirm password
+                    <input type="password" name="cpassword" required>
+                </label>
+                <input type="submit" name="submit" value="Register" class="button">
+                <p>Already have an account? <a href="#login" id="login-link">Login</a></p>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.1/js/foundation.js" integrity="sha384-YI5F3byspkhV/udjkI4b1vvwEPh5ziPxb9sck3tXmeaMC/IxBuGzE90W4zW7PBF4" crossorigin="anonymous"></script>
+    <script src="static/login.js"></script>
+</body>
+</html>
+{{ end }}

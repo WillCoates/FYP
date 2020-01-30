@@ -47,7 +47,7 @@ func hostHTTP(endpoint string, logic *business.Logic) {
 
 	var server http.Server
 
-	server.Handler = CreateRouter()
+	server.Handler = CreateRouter(logic)
 
 	err = server.Serve(lis)
 	if err != nil {

@@ -12,4 +12,5 @@ type Audience struct {
 	DefaultDuration uint32             `bson:"defaultExpires"`
 	MaxDuration     uint32             `bson:"maxExpires"`
 	Comment         string             `bson:"comment"`
+	Secret          string             `bson:"secret"`
 }

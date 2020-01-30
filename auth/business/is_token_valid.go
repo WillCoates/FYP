@@ -20,7 +20,7 @@ var ErrTokenInvalid error = errors.New("Token invalid")
 func (logic *Logic) IsTokenValid(ctx context.Context, token *auth.Token) error {
 	// Expiry
 	now := time.Now().Unix()
-	if token.Payload.Expires >= now || token.Payload.NotBefore < now {
+	if token.Payload.Expires <= now || token.Payload.NotBefore > now {
 		return ErrTokenInvalid
 	}
 

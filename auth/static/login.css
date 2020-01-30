@@ -1,0 +1,31 @@
+@keyframes form-hiding {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes form-showing {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#register, #login {
+    height: 100vh;
+}
+
+.form-hidden {
+    display: none;
+}
+
+.form-hiding {
+    display: block;
+    animation: 500ms form-hiding ease-in forwards;
+}
+
+.form-showing {
+    display: block;
+    animation: 500ms form-showing ease-out forwards;
+}
+
+.form-show {
+    display: block;
+}
