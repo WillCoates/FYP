@@ -14,7 +14,7 @@ func (logic *Logic) EncodeToken(token *auth.Token) ([]byte, error) {
 func (logic *Logic) DecodeToken(token []byte) (*auth.Token, error) {
 	logic.keyConfigLock.RLock()
 	defer logic.keyConfigLock.RUnlock()
-	return auth.ParseToken(token, logic.pubKeys)
+	return auth.ParseToken(token, logic.pubKeys.Keys)
 }
 
 // EncodeTokenStr serializes a token into JWT, applying a signature
@@ -30,5 +30,5 @@ func (logic *Logic) EncodeTokenStr(token *auth.Token) (string, error) {
 func (logic *Logic) DecodeTokenStr(token string) (*auth.Token, error) {
 	logic.keyConfigLock.RLock()
 	defer logic.keyConfigLock.RUnlock()
-	return auth.ParseToken([]byte(token), logic.pubKeys)
+	return auth.ParseToken([]byte(token), logic.pubKeys.Keys)
 }

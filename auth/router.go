@@ -15,5 +15,7 @@ func CreateRouter(logic *business.Logic) http.Handler {
 	router.POST("/auth", routes.PostLogin(logic))
 	router.GET("/token", routes.GetToken(logic))
 	router.POST("/token", routes.GetToken(logic))
+	router.GET("/keys", routes.GetKeys(logic))
+	router.GET("/keys.sig", routes.GetKeysSignature(logic))
 	return router
 }

@@ -8,6 +8,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/WillCoates/FYP/auth/business"
@@ -58,7 +59,13 @@ func hostHTTP(endpoint string, logic *business.Logic) {
 }
 
 func main() {
-	config, err := toml.LoadFile("auth.toml")
+	configFile := "auth.toml"
+
+	if len(os.Args) > 1 {
+		configFile = os.Args[1]
+	}
+
+	config, err := toml.LoadFile(configFile)
 
 	if err != nil {
 		log.Println("Failed to load config")
@@ -106,7 +113,7 @@ func main() {
 	}
 
 	logic := business.MakeLogic(db.Database("fyp_auth"))
-	logic.SetKeyConfig(currentKey, &keys)
+	logic.SetKeyConfig(currentKey, keys)
 
 	if grpcEndpoint != "DISABLED" {
 		go hostGRPC(grpcEndpoint, logic)

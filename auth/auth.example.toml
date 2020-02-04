@@ -1,0 +1,4 @@
+mongoURL = "mongodb://mongodb:27017"
+currentKey = "test"
+[keys]
+test = "/data/keys/test.der"

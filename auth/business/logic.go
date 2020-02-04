@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"sync"
 
+	"github.com/WillCoates/FYP/common/auth"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -15,7 +16,8 @@ type Logic struct {
 	keyConfigLock sync.RWMutex
 	currentKey    string
 	keys          map[string]*ecdsa.PrivateKey
-	pubKeys       map[string]*ecdsa.PublicKey
+	// pubKeys       map[string]*ecdsa.PublicKey
+	pubKeys *auth.KeyBundle
 }
 
 // Constructs a new logic object
