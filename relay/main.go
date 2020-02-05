@@ -89,7 +89,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	db, err := mongo.NewClient(options.Client().ApplyURI(mongoURL))
+	dbConn, err := mongo.NewClient(options.Client().ApplyURI(mongoURL))
 	if err != nil {
 		log.Println("Failed to create MongoDB client")
 		log.Fatalln(err)
@@ -98,13 +98,13 @@ func main() {
 	dbctx, dbcancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer dbcancel()
 
-	err = db.Connect(dbctx)
+	err = dbConn.Connect(dbctx)
 	if err != nil {
 		log.Println("Failed to connect to MongoDB")
 		log.Fatalln(err)
 	}
 
-	collection := db.Database("fyp").Collection("sensor_readings")
+	db := dbConn.Database("fyp")
 
 	for {
 		var amqpConnection *amqp.Connection
@@ -128,7 +128,7 @@ func main() {
 		}
 
 		for i := 0; i < numListeners; i++ {
-			go listener(amqpConnection, collection)
+			go listener(amqpConnection, db)
 		}
 
 		closeErrors := amqpConnection.NotifyClose(make(chan *amqp.Error))

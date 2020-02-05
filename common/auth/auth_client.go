@@ -21,7 +21,7 @@ func NewAuthClient(authURL string, keys string) (*Client, error) {
 	var err error
 	client := new(Client)
 
-	client.clientConn, err = grpc.Dial(authURL)
+	client.clientConn, err = grpc.Dial(authURL, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}

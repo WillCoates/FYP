@@ -7,17 +7,24 @@ import (
 	"log"
 	"regexp"
 
+	"github.com/WillCoates/FYP/common/model"
 	"github.com/streadway/amqp"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func listener(connection *amqp.Connection, collection *mongo.Collection) {
+func listener(connection *amqp.Connection, db *mongo.Database) {
 	topicRegex, err := regexp.Compile("^([a-zA-Z0-9]+)\\.sensor(\\.([a-zA-Z0-9]+))?(\\.[a-zA-Z0-9]+)*$")
 	if err != nil {
 		fmt.Println("Regex error")
 		fmt.Println(err)
 		return
 	}
+
+	sensors := db.Collection("sensors")
+	readings := db.Collection("sensor_readings")
+	types := db.Collection("sensor_types")
 
 	ch, err := connection.Channel()
 	if err != nil {
@@ -45,9 +52,64 @@ func listener(connection *amqp.Connection, collection *mongo.Collection) {
 			log.Println(err)
 			msg.Nack(false, false) // Discard
 		} else {
-			data := payload.ToSensorData()
-			data.User = topicData[1]
-			_, err = collection.InsertOne(context.Background(), data)
+			var sensor model.Sensor
+			var data model.SensorData
+			var sensorID primitive.ObjectID
+
+			userID, err := primitive.ObjectIDFromHex(topicData[1])
+
+			if err != nil {
+				log.Println("Failed to decode user ID")
+				log.Println(err)
+				msg.Nack(false, false) // Discard
+			}
+
+			err = sensors.FindOne(context.Background(), bson.M{"user": userID, "unitid": payload.UnitID, "info.sensor": payload.Sensor}).Decode(&sensor)
+			if err == mongo.ErrNoDocuments {
+				var info model.SensorInfo
+				sensor.User = userID
+				sensor.UnitID = payload.UnitID
+				sensor.Name = payload.UnitID
+
+				err = types.FindOne(context.Background(), bson.M{"sensor": payload.Sensor}).Decode(&info)
+				if err == mongo.ErrNoDocuments {
+					info.Sensor = payload.Sensor
+					info.Measurement = payload.Sensor
+					info.Units = payload.Sensor
+					info.Hidden = false
+				} else if err != nil {
+					log.Println("Failed to fetch zero-config sensor info")
+					log.Println(err)
+					msg.Nack(false, true)
+					continue
+				}
+
+				info.ID = primitive.ObjectID{}
+				sensor.Info = &info
+
+				res, err := sensors.InsertOne(context.Background(), &sensor)
+				if err != nil {
+					log.Println("Failed to create sensor")
+					log.Println(err)
+					msg.Nack(false, true)
+					continue
+				}
+				sensorID = res.InsertedID.(primitive.ObjectID)
+			} else if err != nil {
+				log.Println("Failed to fetch sensor")
+				log.Println(err)
+				msg.Nack(false, true)
+				continue
+			} else {
+				sensorID = sensor.ID
+			}
+
+			data.Sensor = sensorID
+			data.Timestamp = payload.Timestamp
+			data.Value = payload.Value
+			data.MessageID = payload.MessageID
+
+			_, err = readings.InsertOne(context.Background(), data)
 			if err != nil {
 				log.Println("Failed to store data")
 				log.Println(err)
