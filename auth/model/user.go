@@ -12,6 +12,7 @@ type User struct {
 	EmailAddress string             `bson:"email"`
 	Password     []byte             `bson:"password"`
 	Name         string             `bson:"name"`
+	SpecialPerms []string           `bson:"specialperms,omitempty"`
 }
 
 func (user *User) SetPassword(password string) error {

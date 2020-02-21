@@ -17,5 +17,9 @@ func CreateRouter(logic *business.Logic) http.Handler {
 	router.POST("/token", routes.GetToken(logic))
 	router.GET("/keys", routes.GetKeys(logic))
 	router.GET("/keys.sig", routes.GetKeysSignature(logic))
+	router.POST("/rabbit/user", routes.RabbitUser(logic))
+	router.POST("/rabbit/vhost", routes.RabbitVhost(logic))
+	router.POST("/rabbit/resource", routes.RabbitResource(logic))
+	router.POST("/rabbit/topic", routes.RabbitTopic(logic))
 	return router
 }
