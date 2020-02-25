@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
-	"strconv"
 	"time"
 
+	"github.com/pelletier/go-toml"
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -37,59 +38,22 @@ func prepareMessageQueue(connection *amqp.Connection) error {
 	return err
 }
 
-/*
 func main() {
-	// TODO: Load configuration
-	db, err := mongo.NewClient(options.Client().ApplyURI("mongodb://relay:Y&q&tdPuX2G1_4G8@docker:27017"))
-	checkError(err, "Failed to create MongoDB client")
+	var config Config
 
-	dbctx, dbcancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer dbcancel()
+	configFile := "relay.toml"
 
-	err = db.Connect(dbctx)
-	checkError(err, "Failed to connect to MongoDB")
-
-	collection := db.Database("fyp").Collection("sensor_readings")
-
-	conn, err := amqp.Dial("amqp://docker:5672/")
-	checkError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
-	err = prepareMessageQueue(conn)
-	checkError(err, "Failed to create message queue")
-
-	halt := make(chan bool)
-
-	for i := 0; i < 1; i++ {
-		go listener(conn, collection)
+	if len(os.Args) > 1 {
+		configFile = os.Args[1]
 	}
 
-	<-halt
-}
-*/
-
-func main() {
-	mongoURL := os.Getenv("MONGO_URL")
-	if mongoURL == "" {
-		mongoURL = "mongodb://relay:Y&q&tdPuX2G1_4G8@docker:27017"
-	}
-
-	amqpURL := os.Getenv("AMQP_URL")
-	if amqpURL == "" {
-		amqpURL = "amqp://docker:5672/"
-	}
-
-	numListenersStr := os.Getenv("LISTENERS")
-	if numListenersStr == "" {
-		numListenersStr = "1"
-	}
-
-	numListeners, err := strconv.Atoi(numListenersStr)
+	configTree, err := toml.LoadFile(configFile)
 	if err != nil {
-		log.Println("Error reading config: Invalid number of listeners")
-		log.Fatalln(err)
+		log.Fatalln("Failed to load config", err)
 	}
+	configTree.Unmarshal(&config)
 
-	dbConn, err := mongo.NewClient(options.Client().ApplyURI(mongoURL))
+	dbConn, err := mongo.NewClient(options.Client().ApplyURI(config.MongoURL))
 	if err != nil {
 		log.Println("Failed to create MongoDB client")
 		log.Fatalln(err)
@@ -109,7 +73,14 @@ func main() {
 	for {
 		var amqpConnection *amqp.Connection
 		for {
-			amqpConnection, err = amqp.Dial(amqpURL)
+			amqpUrl, err := url.Parse(config.AmqpURL)
+			if err != nil {
+				log.Fatalln("Failed to decode AMQP url", err)
+			}
+
+			amqpUrl.User = url.UserPassword(config.AuthUsername, config.AuthPassword)
+
+			amqpConnection, err = amqp.Dial(amqpUrl.String())
 			if err != nil {
 				log.Println("Failed to connect to RabbitMQ")
 				log.Println(err)
@@ -127,7 +98,7 @@ func main() {
 			log.Fatalln(err)
 		}
 
-		for i := 0; i < numListeners; i++ {
+		for i := 0; i < config.Listeners; i++ {
 			go listener(amqpConnection, db)
 		}
 

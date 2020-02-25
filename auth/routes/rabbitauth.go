@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/WillCoates/FYP/auth/business"
+	"github.com/WillCoates/FYP/auth/model"
+	"github.com/WillCoates/FYP/common/auth"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -23,8 +25,15 @@ func RabbitUser(logic *business.Logic) httprouter.Handle {
 			return
 		}
 		username := r.FormValue("username")
+		password := r.FormValue("password")
 
-		token, err := logic.DecodeTokenStr(username)
+		// @ is never in a token, treat as email
+		var token *auth.Token
+		if strings.ContainsRune(username, '@') {
+			token, err = logic.Authenticate(context.Background(), username, password, "special", 1)
+		} else {
+			token, err = logic.DecodeTokenStr(username)
+		}
 
 		if err != nil {
 			fmt.Fprint(w, "deny")
@@ -72,14 +81,19 @@ func RabbitResource(logic *business.Logic) httprouter.Handle {
 
 		log.Println("RabbitResource", username, resource, name, permission)
 
-		token, err := logic.DecodeTokenStr(username)
+		var user *model.User
 
-		if err != nil {
-			fmt.Fprint(w, "deny", err)
-			return
+		if strings.ContainsRune(username, '@') {
+			user, err = logic.GetUserByEmail(context.Background(), username)
+		} else {
+			token, err := logic.DecodeTokenStr(username)
+			if err != nil {
+				fmt.Fprint(w, "deny", err)
+				return
+			}
+			user, err = logic.GetUser(context.Background(), token)
 		}
 
-		user, err := logic.GetUser(context.Background(), token)
 		if err != nil {
 			fmt.Fprint(w, "deny", err)
 			return
@@ -150,17 +164,17 @@ func RabbitTopic(logic *business.Logic) httprouter.Handle {
 
 		log.Println("RabbitTopic", username, name, permission, routingKey)
 
-		token, err := logic.DecodeTokenStr(username)
+		var user *model.User
 
-		if err != nil {
-			fmt.Fprint(w, "deny", err)
-			return
-		}
-
-		user, err := logic.GetUser(context.Background(), token)
-		if err != nil {
-			fmt.Fprint(w, "deny", err)
-			return
+		if strings.ContainsRune(username, '@') {
+			user, err = logic.GetUserByEmail(context.Background(), username)
+		} else {
+			token, err := logic.DecodeTokenStr(username)
+			if err != nil {
+				fmt.Fprint(w, "deny", err)
+				return
+			}
+			user, err = logic.GetUser(context.Background(), token)
 		}
 
 		if user.SpecialPerms != nil {
@@ -183,13 +197,16 @@ func RabbitTopic(logic *business.Logic) httprouter.Handle {
 			return
 		}
 		topicUser := match[1]
-		topicArea := match[2]
+		//topicArea := match[2]
 
-		if topicUser != token.Payload.Subject {
+		if topicUser != user.ID.Hex() {
 			fmt.Fprint(w, "deny")
 			return
 		}
 
+		fmt.Fprint(w, "allow")
+
+		/* TODO
 		var requiredPermission string
 
 		switch {
@@ -207,7 +224,6 @@ func RabbitTopic(logic *business.Logic) httprouter.Handle {
 		}
 
 		result := "deny"
-
 		permissions, err := logic.GetTokenPermissions(context.Background(), token)
 
 		for perm := range permissions {
@@ -217,5 +233,6 @@ func RabbitTopic(logic *business.Logic) httprouter.Handle {
 		}
 
 		fmt.Fprint(w, result)
+		*/
 	}
 }

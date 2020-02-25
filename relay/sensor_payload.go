@@ -1,6 +1,7 @@
 package main
 
 /*
+Topic: user id/sensor/meshliumid
 Meshlium payload:
 {
 	"msg_id": "#ID#",
