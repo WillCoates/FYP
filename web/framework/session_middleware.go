@@ -10,10 +10,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-type key int
-
-var metaSession key = 0
-
 const SESSION_COOKIE string = "session_id"
 
 // SessionMiddleware adds a Session to a HTTP Request, saving after the request has been processed
@@ -22,6 +18,7 @@ func SessionMiddleware(next httprouter.Handle, manager *SessionManager) httprout
 		cookie, err := r.Cookie(SESSION_COOKIE)
 		var session *Session
 		if err != nil {
+			log.Println("Failed to fetch cookie", err)
 			cookie = nil
 		}
 

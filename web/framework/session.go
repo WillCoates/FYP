@@ -16,33 +16,38 @@ type Session struct {
 }
 
 type SessionManager struct {
-	client redis.Client
+	client *redis.Client
+}
+
+func NewSessionManager(redisURL string) (*SessionManager, error) {
+	url, err := redis.ParseURL(redisURL)
+	if err != nil {
+		return nil, err
+	}
+
+	manager := new(SessionManager)
+	manager.client = redis.NewClient(url)
+
+	return manager, nil
 }
 
 func (sess *Session) Save() error {
 	client := sess.manager.client
-	var toDelete = make([]string, 0)
-	var toSet = make(map[string]interface{})
 
 	for key, value := range sess.Values {
 		if value == "" {
-			toDelete = append(toDelete, key)
+			status := client.HDel(sess.id, key)
+			err := status.Err()
+			if err != nil {
+				return err
+			}
 		} else {
-			toSet[key] = value
+			status := client.HSet(sess.id, key, value)
+			err := status.Err()
+			if err != nil {
+				return err
+			}
 		}
-	}
-
-	if len(toDelete) > 0 {
-		status := client.HDel(sess.id, toDelete...)
-		err := status.Err()
-		if err != nil {
-			return err
-		}
-	}
-	status := client.HMSet(sess.id, toSet)
-	err := status.Err()
-	if err != nil {
-		return err
 	}
 
 	client.Expire(sess.id, 24*time.Hour)
@@ -80,6 +85,7 @@ func (mgr *SessionManager) Create() (*Session, error) {
 	}
 	idBase64 := base64.RawURLEncoding.EncodeToString(id)
 	session := new(Session)
+	session.Values = make(map[string]string)
 	session.id = idBase64
 	session.manager = mgr
 
