@@ -35,6 +35,11 @@ func main() {
 		log.Fatalln("Failed to create session manager", err)
 	}
 
+	templateManager, err := framework.NewTemplateManager(config.TemplateDir)
+	if err != nil {
+		log.Fatalln("Failed to create template manager", err)
+	}
+
 	logic := new(business.Logic)
 	logic.MasterKey = auth.MasterKey()
 	logic.Config = config.Global
@@ -46,7 +51,7 @@ func main() {
 
 	var server http.Server
 
-	server.Handler = CreateRouter(logic, sessionManager)
+	server.Handler = CreateRouter(logic, sessionManager, templateManager)
 
 	err = server.Serve(lis)
 	if err != nil {

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.1/css/foundation.min.css" integrity="sha384-Bu0ub28kcl6HYTYOztakXlHnFhxLf10qnQMFk/g5oZwiD8eZSJrUNMB7mrGE84CZ" crossorigin="anonymous">
+    {{ block "head" . }}
+    {{ end }}
+</head>
+<body>
+    {{ block "body" . }}
+    {{ block "content" .Data }}
+    <div class="container-fluid">You might want to put some content here</div>
+    {{ end }}
+    {{ end }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.1/js/foundation.js" integrity="sha384-YI5F3byspkhV/udjkI4b1vvwEPh5ziPxb9sck3tXmeaMC/IxBuGzE90W4zW7PBF4" crossorigin="anonymous"></script>
+    <script>
+        $(document).foundation();
+    </script>
+    {{ block "scripts" . }}
+    {{ end }}
+</body>
+</html>

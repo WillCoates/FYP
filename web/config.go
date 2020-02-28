@@ -1,6 +1,7 @@
 package main
 
 type Config struct {
-	RedisURL string
-	Global   map[string]string
+	RedisURL    string
+	TemplateDir string
+	Global      map[string]string
 }

@@ -9,14 +9,17 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func CreateRouter(logic *business.Logic, sessionManager *framework.SessionManager) http.Handler {
+func CreateRouter(logic *business.Logic, sessionManager *framework.SessionManager, templateManager *framework.TemplateManager) http.Handler {
 	router := httprouter.New()
 
 	router.GET("/counter",
 		framework.SessionMiddleware(
 			framework.AuthMiddleware(controllers.Counter(), "web", logic),
-			sessionManager),
-	)
+			sessionManager))
+	router.GET("/",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.Dashboard(templateManager), "web", logic),
+			sessionManager))
 
 	return router
 }

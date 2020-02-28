@@ -1,0 +1,23 @@
+{{ define "body" }}
+<div class="off-canvas position-left reveal-for-large" id="sidebar" data-off-canvas>
+    <ul class="vertical menu accordion-menu" data-accordion-menu>
+        <li>
+            <a href="#">Item 1</a>
+            <ul class="menu vertical nested">
+                <li><a href="#">Item 1A</a></li>
+                <li><a href="#">Item 1B</a></li>
+            </ul>
+        </li>
+        <li><a href="#">Item 2</a></li>
+    </ul>
+</div>
+<div class="off-canvas-content" data-off-canvas-content>
+    <div class="title-bar">
+        <div class="title-bar-left">
+            <button class="menu-icon" type="button" data-open="sidebar"></button>
+            <span class="title-bar-title">SmartFarm</span>
+        </div>
+    </div>
+    {{ template "content" .Data }}
+    {{ end }}
+</div>
