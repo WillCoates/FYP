@@ -101,8 +101,7 @@ func StreamServerInteceptor(next grpc.StreamServerInterceptor, authClient *Clien
 		if next != nil {
 			return next(srv, ss, info, handler)
 		}
-		handler(srv, ss)
-		return nil
+		return handler(srv, ss)
 	}
 }
 
