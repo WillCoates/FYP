@@ -104,16 +104,25 @@ func listener(connection *amqp.Connection, db *mongo.Database) {
 				sensorID = sensor.ID
 			}
 
-			data.Sensor = sensorID
-			data.Timestamp = payload.Timestamp
-			data.Value = payload.Value
-			data.MessageID = payload.MessageID
+			result := readings.FindOne(context.Background(), bson.M{"msgid": payload.MessageID, "sensor": sensorID})
+			err = result.Err()
+			if err == mongo.ErrNoDocuments {
+				data.Sensor = sensorID
+				data.Timestamp = payload.Timestamp
+				data.Value = payload.Value
+				data.MessageID = payload.MessageID
 
-			_, err = readings.InsertOne(context.Background(), data)
-			if err != nil {
-				log.Println("Failed to store data")
-				log.Println(err)
-				msg.Nack(false, true) // Requeue
+				_, err = readings.InsertOne(context.Background(), data)
+				if err != nil {
+					log.Println("Failed to store data")
+					log.Println(err)
+					msg.Nack(false, true) // Requeue
+				} else {
+					msg.Ack(false)
+				}
+			} else if err != nil {
+				log.Println("Failed to check for duplicate reading", err)
+				msg.Nack(false, true)
 			} else {
 				msg.Ack(false)
 			}
