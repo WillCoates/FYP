@@ -83,6 +83,7 @@ $RECYCLE.BIN/
 # Configuration files
 *.toml
 !*.example.toml
+!templates.toml
 
 # Certificates
 *.der

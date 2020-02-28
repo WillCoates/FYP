@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"os"
 	"time"
 
 	"github.com/WillCoates/FYP/common/auth"
@@ -18,8 +19,15 @@ import (
 )
 
 func main() {
+	configFile := "sensors.toml"
 	var config Config
-	configRaw, err := ioutil.ReadFile("sensors.toml")
+
+	if len(os.Args) > 1 {
+		configFile = os.Args[1]
+	}
+
+	configRaw, err := ioutil.ReadFile(configFile)
+
 	if err != nil {
 		log.Println("Failed to read configuration file")
 		log.Fatalln(err)

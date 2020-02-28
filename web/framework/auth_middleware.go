@@ -30,6 +30,14 @@ func AuthMiddleware(next httprouter.Handle, audience string, logic *business.Log
 			return
 		}
 
+		// localhost use http, else use https
+		var proto string
+		if r.Host == "localhost" {
+			proto = "http://"
+		} else {
+			proto = "https://"
+		}
+
 		var token *auth.Token
 		var err error
 
@@ -55,7 +63,7 @@ func AuthMiddleware(next httprouter.Handle, audience string, logic *business.Log
 			query := make(url.Values)
 			query.Add("grant_type", "authorization_code")
 			query.Add("code", code)
-			query.Add("redirect_uri", r.Host+r.URL.String())
+			query.Add("redirect_uri", proto+r.Host+r.URL.String())
 			query.Add("client_id", audience)
 			tokenRequest.URL.RawQuery = query.Encode()
 
@@ -96,6 +104,9 @@ func AuthMiddleware(next httprouter.Handle, audience string, logic *business.Log
 			}
 
 			sess.Values["token_"+audience] = token.(string)
+
+			http.Redirect(w, r, r.URL.String(), http.StatusTemporaryRedirect)
+			return
 		}
 
 		tokenRaw, ok := sess.Values["token_"+audience]
@@ -118,7 +129,7 @@ func AuthMiddleware(next httprouter.Handle, audience string, logic *business.Log
 
 			query.Add("response_type", "code")
 			query.Add("client_id", audience)
-			query.Add("redirect_uri", r.Host+r.RequestURI)
+			query.Add("redirect_uri", proto+r.Host+r.RequestURI)
 			query.Add("state", "test") // TODO: Randomize this
 			redirectURL.RawQuery = query.Encode()
 			http.Redirect(w, r, redirectURL.String(), http.StatusTemporaryRedirect)

@@ -1,0 +1,5 @@
+.vscode
+nginx
+rabbitmq
+.gitignore
+docker-compose.yml

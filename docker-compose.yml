@@ -1,0 +1,65 @@
+version: "3"
+services:
+    nginx:
+        build: ./nginx
+        restart: always
+        ports:
+            - "127.0.0.1:8081:80"
+            - "127.0.0.1:8082:8080"
+        links:
+            - auth
+            - sensors
+            - web
+    rabbitmq:
+        ports:
+            - "1883:1883"
+        build: ./rabbitmq
+        restart: always
+    mongodb:
+        image: mongo
+        restart: always
+        volumes:
+            - mongo_data:/data
+    sessions:
+        image: redis
+        restart: always
+        volumes:
+            - session_data:/data
+    relay:
+        build: ./
+        restart: always
+        deploy:
+            replicas: 2
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+        links:
+            - rabbitmq
+            - mongodb
+        command: relay /go/src/app/configs/relay.toml
+    web:
+        build: ./
+        restart: always
+        links:
+            - sessions
+            - auth
+            - sensors
+        command: web /go/src/app/configs/web.toml
+        working_dir: /go/src/app/web
+    sensors:
+        build: ./
+        restart: always
+        links:
+            - mongodb
+            - auth
+        command: sensors /go/src/app/configs/sensors.toml
+    auth:
+        build: ./
+        restart: always
+        links:
+            - mongodb
+        command: auth /go/src/app/configs/auth.toml
+        working_dir: /go/src/app/auth
+volumes:
+    session_data: {}
+    rabbitmq_data: {}
+    mongo_data: {}

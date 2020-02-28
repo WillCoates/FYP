@@ -39,7 +39,7 @@ func main() {
 	logic.MasterKey = auth.MasterKey()
 	logic.Config = config.Global
 
-	lis, err := net.Listen("tcp", ":8082")
+	lis, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatalln("Failed to start HTTP server", err)
 	}
