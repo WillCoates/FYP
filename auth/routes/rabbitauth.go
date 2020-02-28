@@ -37,7 +37,7 @@ func RabbitUser(logic *business.Logic) httprouter.Handle {
 
 		if err != nil {
 			fmt.Fprint(w, "deny")
-			log.Println("RabbitUser failed to decode token")
+			log.Println("RabbitUser failed to decode token", err)
 			return
 		}
 
