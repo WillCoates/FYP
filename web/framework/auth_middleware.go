@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/WillCoates/FYP/common/auth"
 	"github.com/WillCoates/FYP/web/business"
@@ -113,6 +114,9 @@ func AuthMiddleware(next httprouter.Handle, audience string, logic *business.Log
 		if ok {
 			token, err = auth.ParseToken([]byte(tokenRaw), keys.Keys)
 			if err != nil {
+				ok = false
+			}
+			if token.Payload.Expires <= time.Now().Unix() {
 				ok = false
 			}
 		}
