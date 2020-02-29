@@ -11,12 +11,15 @@
 </head>
 <body>
     {{ block "body" . }}
+    <div class="grid-container fluid"></div>
     {{ block "content" .Data }}
-    <div class="container-fluid">You might want to put some content here</div>
+    <div class="grid-x"><div class="cell">You might want to put some content here</div></div>
     {{ end }}
+    </div>
     {{ end }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.1/js/foundation.js" integrity="sha384-YI5F3byspkhV/udjkI4b1vvwEPh5ziPxb9sck3tXmeaMC/IxBuGzE90W4zW7PBF4" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
     <script>
         $(document).foundation();
     </script>
