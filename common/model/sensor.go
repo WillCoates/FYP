@@ -8,4 +8,5 @@ type Sensor struct {
 	UnitID string             `bson:"unitid"`
 	Name   string             `bson:"name"`
 	Info   *SensorInfo        `bson:"info"`
+	Site   primitive.ObjectID `bson:"site,omitempty"`
 }
