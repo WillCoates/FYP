@@ -9,6 +9,8 @@ import (
 )
 
 func (service *SensorsService) UpdateSensor(ctx context.Context, req *proto.SensorInfo) (*proto.SensorInfo, error) {
+	var err error
+
 	_, perms, ok := auth.FromContext(ctx)
 	if !ok {
 		return nil, ErrNoToken
@@ -36,8 +38,12 @@ func (service *SensorsService) UpdateSensor(ctx context.Context, req *proto.Sens
 	sensor.Name = req.GetName()
 	sensor.UnitID = req.GetUnit()
 	sensor.Info = &info
+	sensor.Site, err = service.logic.GetSiteId(users, req.Site, true)
+	if err != nil {
+		return nil, err
+	}
 
-	err := service.logic.UpdateSensor(ctx, &sensor, users)
+	err = service.logic.UpdateSensor(ctx, &sensor, users)
 	if err != nil {
 		return nil, err
 	}
