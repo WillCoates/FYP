@@ -65,6 +65,7 @@ func PostLogin(logic *business.Logic) httprouter.Handle {
 			challenge, err = model.NewChallenge(challengeText, challengeAlgo)
 			if err != nil {
 				w.Write([]byte("Failed to decode challenge"))
+				return
 			}
 		}
 
@@ -114,18 +115,18 @@ func PostLogin(logic *business.Logic) httprouter.Handle {
 
 			err := logic.Register(context.Background(), data.RegisterEmail, data.RegisterName, password)
 			if err != nil {
-				data.LoginError = err.Error()
+				data.RegisterError = err.Error()
 			} else {
 				token, err := logic.Authenticate(context.Background(), data.RegisterEmail, password, clientID, 0)
 
 				if err != nil {
-					data.LoginError = err.Error()
+					data.RegisterError = err.Error()
 				} else {
 					code, err := logic.CreateAuthCode(context.Background(), token, redirectURI, challenge)
 					if err != nil {
 						log.Println("Failed to generate auth code")
 						log.Println(err)
-						data.LoginError = "Failed to process request, please try again in a few minutes."
+						data.RegisterError = "Failed to process request, please try again in a few minutes."
 					} else {
 						query := target.Query()
 						query.Add("code", code)
