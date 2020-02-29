@@ -11,7 +11,7 @@ import (
 
 func (logic *Logic) GetSiteId(users []string, name string, create bool) (primitive.ObjectID, error) {
 	// Allow sensors without sites
-	if name == "" {
+	if name == "None" {
 		return primitive.NilObjectID, nil
 	}
 

@@ -9,6 +9,10 @@ import (
 )
 
 func (logic *Logic) GetSiteName(users []string, id *primitive.ObjectID) (string, error) {
+	if id == &primitive.NilObjectID {
+		return "None", nil
+	}
+
 	sites := logic.db.Collection("sites")
 	userIds := make([]primitive.ObjectID, len(users))
 
