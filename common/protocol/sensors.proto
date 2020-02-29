@@ -7,6 +7,7 @@ message SensorInfo {
     string measurementname = 4;
     string measurementunit = 5;
     bool hidden = 6;
+    string site = 7;
 }
 
 message SensorData {
@@ -22,12 +23,14 @@ message SensorData {
 message GetSensorsRequest {
     string name = 1;
     bool includeHidden = 2;
+    repeated string site = 3;
 }
 
 message GetSensorReadingsRequest {
     repeated string unit = 1;
     repeated string sensor = 2;
     int64 since = 3;
+    repeated string site = 4;
 }
 
 service SensorsService {
