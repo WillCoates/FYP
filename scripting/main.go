@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/WillCoates/FYP/common/auth"
-	proto "github.com/WillCoates/FYP/common/protocol/scipting"
-	"github.com/WillCoates/FYP/sensors/service"
+	proto "github.com/WillCoates/FYP/common/protocol/scripting"
+	"github.com/WillCoates/FYP/scripting/service"
 	"github.com/pelletier/go-toml"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -63,7 +63,7 @@ func main() {
 	server := grpc.NewServer(grpc.UnaryInterceptor(auth.UnaryServerInteceptor(nil, authClient)),
 		grpc.StreamInterceptor(auth.StreamServerInteceptor(nil, authClient)))
 
-	proto.RegisterScriptingServiceServer(server, service.NewSensorsService(db))
+	proto.RegisterScriptingServiceServer(server, service.NewScriptingService(db.Database(config.MongoDB)))
 
 	lis, err := net.Listen("tcp", config.Binding)
 	if err != nil {

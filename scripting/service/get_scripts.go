@@ -10,6 +10,7 @@ import (
 
 func (service *ScriptingService) GetScripts(req *proto.GetScriptsRequest, srv proto.ScriptingService_GetScriptsServer) error {
 	scripts := service.db.Collection("scripts")
+	errors := service.db.Collection("script_errors")
 
 	_, perms, ok := auth.FromContext(srv.Context())
 	if !ok {
@@ -54,6 +55,7 @@ func (service *ScriptingService) GetScripts(req *proto.GetScriptsRequest, srv pr
 		protoScript.LastModified = script.LastModified
 		protoScript.Name = script.Name
 		protoScript.Subscriptions = script.Patterns
+		protoScript.RecentErrorCount, err = errors.CountDocuments(srv.Context(), bson.M{"script": script.ID, "timestamp": bson.M{"$gte": script.LastModified}})
 		err = srv.Send(&protoScript)
 		if err != nil {
 			return err

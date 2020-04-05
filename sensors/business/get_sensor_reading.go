@@ -24,6 +24,12 @@ func (logic *Logic) GetSensorReadingsQuery(ctx context.Context, users []string, 
 		sensorMapping[sen.ID] = sen
 	}
 
+	if len(sensorIds) == 0 {
+		dummyChan := make(chan SensorReading)
+		close(dummyChan)
+		return dummyChan, nil
+	}
+
 	var readings = logic.db.Collection("sensor_readings")
 	readingQuery := make(bson.M)
 

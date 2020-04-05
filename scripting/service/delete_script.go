@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"github.com/WillCoates/FYP/common/auth"
 	proto "github.com/WillCoates/FYP/common/protocol/scripting"
@@ -11,8 +10,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service *ScriptingService) UpdateScript(ctx context.Context, req *proto.Script) (*proto.Script, error) {
+func (service *ScriptingService) DeleteScript(ctx context.Context, req *proto.Script) (*proto.Script, error) {
 	scripts := service.db.Collection("scripts")
+	errors := service.db.Collection("script_errors")
 
 	_, perms, ok := auth.FromContext(ctx)
 	if !ok {
@@ -41,30 +41,30 @@ func (service *ScriptingService) UpdateScript(ctx context.Context, req *proto.Sc
 		return nil, err
 	}
 
-	lastMod := time.Now().Unix()
-
 	filter := bson.M{
 		"_id":  scriptID,
 		"user": bson.M{"$in": userIDs},
 	}
 
-	update := bson.M{
-		"name":         req.Details.Name,
-		"patterns":     req.Details.Subscriptions,
-		"source":       req.Source,
-		"lastmodified": lastMod,
-	}
+	res, err := scripts.DeleteOne(ctx, filter)
 
-	res, err := scripts.UpdateOne(ctx, filter, bson.M{"$set": update})
 	if err != nil {
 		return nil, err
 	}
 
-	if res.MatchedCount == 0 {
+	if res.DeletedCount == 0 {
 		return nil, ErrScriptNotFound
 	}
 
-	req.Details.LastModified = lastMod
+	filter = bson.M{
+		"script": scriptID,
+	}
+
+	_, err = errors.DeleteMany(ctx, filter)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }

@@ -26,7 +26,7 @@ func prepareMessageQueue(connection *amqp.Connection) error {
 		return err
 	}
 
-	err = ch.QueueBind("sensorscripting", "*.sensor.#", "amq.topic", false, nil)
+	err = ch.QueueBind("sensorscripting", "#", "amq.topic", false, nil)
 	return err
 }
 

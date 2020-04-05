@@ -1,10 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
-	"regexp"
+	"strings"
 
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -12,10 +11,6 @@ import (
 )
 
 func listener(connection *amqp.Connection, db *mongo.Database) {
-	topicRegex := regexp.MustCompile("^([a-zA-Z0-9]+)\\.sensor(\\.([a-zA-Z0-9]+))?(\\.[a-zA-Z0-9]+)*$")
-
-	_ = db.Collection("scripts")
-
 	ch, err := connection.Channel()
 	if err != nil {
 		fmt.Println("Failed to create channel")
@@ -26,27 +21,38 @@ func listener(connection *amqp.Connection, db *mongo.Database) {
 	msgs, err := ch.Consume("sensorscripting", "", false, false, false, false, nil)
 
 	for msg := range msgs {
-		topicData := topicRegex.FindStringSubmatch(msg.RoutingKey)
-		if len(topicData) == 0 {
-			log.Printf("Recieved badly formatted topic %s", msg.RoutingKey)
-			msg.Nack(false, false) // Discard
-			continue
+		log.Printf("Message %s", msg.RoutingKey)
+		firstDotOffset := strings.Index(msg.RoutingKey, ".")
+		var userID, topic string
+		if firstDotOffset == -1 {
+			userID = msg.RoutingKey
+			topic = ""
+		} else {
+			userID = msg.RoutingKey[:firstDotOffset]
+			topic = msg.RoutingKey[firstDotOffset+1:]
 		}
-		log.Printf("Message from user %s from relay %s (%s)", topicData[1], topicData[3], topicData[0])
 
-		data := make(map[string]interface{})
-		err := json.Unmarshal(msg.Body, &data)
+		log.Printf("Message from user %s (%s)", userID, topic)
 
 		if err != nil {
 			log.Println("Failed to decode payload", err)
 			msg.Nack(false, false)
 			continue
 		}
-		_, err = primitive.ObjectIDFromHex(topicData[1])
 
+		uid, err := primitive.ObjectIDFromHex(userID)
 		if err != nil {
 			log.Println("Failed to decode user ID", err)
+			msg.Nack(false, false)
 			continue
 		}
+
+		err, requeue := ExecScript(db, ch, uid, topic, string(msg.Body))
+		if err != nil {
+			log.Println("Failed to execute script", err)
+			msg.Nack(false, requeue)
+			continue
+		}
+		msg.Ack(false)
 	}
 }

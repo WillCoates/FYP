@@ -1,0 +1,33 @@
+{{ define "title" }}{{ .Script.Details.Name }}{{ end }}
+{{ define "head" }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css" integrity="sha256-vZ3SaLOjnKO/gGvcUWegySoDU6ff33CS5i9ot8J9Czk=" crossorigin="anonymous" />
+{{ end }}
+{{ define "content" }}
+<div class="grid-x small-up-1">
+    <div class="cell">
+        <h1>{{ .Script.Details.Name }}</h1>
+    </div>
+</div>
+<div class="grid-x">
+    <form class="cell" method="POST">
+        <label>Name <input type="text" value="{{ .Script.Details.Name }}"/></label>
+        <label>Subscriptions (one per line) <textarea rows="5" name="subs">
+            {{ range .Script.Details.Subscriptions }}
+            {{ . }}
+            {{ end }}
+        </textarea></label>
+        <label>Source <textarea name="src" id="src">{{ .Script.Source }}</textarea></label>
+    </form>
+</div>
+{{ end }}
+{{ define "scripts" }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js" integrity="sha256-id5Qk/MwQJxgNlDFDpVymUuReXfTUZiaQKb8arrddQM=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/lua/lua.min.js" integrity="sha256-LOPzZDM7I7GCUcDVYX03VUXJVrKe0xvmf16sON+7QFs=" crossorigin="anonymous"></script>
+<script>
+    "use strict";
+    $(function() {
+        var domSourceEditor = document.getElementById("src");
+        var sourceEditor = CodeMirror.fromTextArea(domSourceEditor, {"mode": "lua"});
+    });
+</script>
+{{ end }}

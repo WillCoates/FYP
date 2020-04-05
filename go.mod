@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/DataDog/zstd v1.4.4 // indirect
+	github.com/Shopify/go-lua v0.0.0-20191113154418-05ce435a9edd
 	github.com/go-redis/redis v6.15.7+incompatible
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/protobuf v1.3.2

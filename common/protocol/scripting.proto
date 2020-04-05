@@ -5,6 +5,7 @@ message ScriptDetails {
     string name = 2;
     repeated string subscriptions = 3;
     int64 last_modified = 4;
+    int64 recent_error_count = 5;
 }
 
 message Script {
@@ -35,5 +36,6 @@ service ScriptingService {
     rpc GetScript(GetScriptRequest) returns (Script);
     rpc AddScript(Script) returns (Script);
     rpc UpdateScript(Script) returns (Script);
+    rpc DeleteScript(Script) returns (Script);
     rpc GetScriptErrors(GetScriptErrorsRequest) returns (stream ScriptError);
 }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
 	"strings"
 
 	"github.com/WillCoates/FYP/auth/business"
@@ -143,11 +142,13 @@ func RabbitResource(logic *business.Logic) httprouter.Handle {
 }
 
 func RabbitTopic(logic *business.Logic) httprouter.Handle {
-	topicRegex, err := regexp.Compile("^([a-zA-Z0-9]+)\\.([a-zA-Z0-9]+)(\\.([a-zA-Z0-9]+))?(\\.[a-zA-Z0-9]+)*$")
-	if err != nil {
-		log.Println("Failed to compile regex")
-		log.Fatalln(err)
-	}
+	/*
+		topicRegex, err := regexp.Compile("^([a-zA-Z0-9]+)\\.([a-zA-Z0-9]+)(\\.([a-zA-Z0-9]+))?(\\.[a-zA-Z0-9]+)*$")
+		if err != nil {
+			log.Println("Failed to compile regex")
+			log.Fatalln(err)
+		}
+	*/
 
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		err := r.ParseForm()
@@ -191,13 +192,23 @@ func RabbitTopic(logic *business.Logic) httprouter.Handle {
 			return
 		}
 
-		match := topicRegex.FindStringSubmatch(routingKey)
-		if len(match) < 2 {
-			fmt.Fprintf(w, "deny")
-			return
+		/*
+			match := topicRegex.FindStringSubmatch(routingKey)
+			if len(match) < 2 {
+				fmt.Fprintf(w, "deny")
+				return
+			}
+			topicUser := match[1]
+			//topicArea := match[2]
+		*/
+		index := strings.Index(routingKey, ".")
+		var topicUser string
+
+		if index == -1 {
+			topicUser = routingKey
+		} else {
+			topicUser = routingKey[:index]
 		}
-		topicUser := match[1]
-		//topicArea := match[2]
 
 		if topicUser != user.ID.Hex() {
 			fmt.Fprint(w, "deny")

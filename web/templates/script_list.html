@@ -1,17 +1,17 @@
-{{ define "title" }}Sensors{{ end }}
+{{ define "title" }}Scripts{{ end }}
 {{ define "content" }}
 <div class="grid-x small-up-1">
     <div class="cell">
-        <h1>Sensors</h1>
+        <h1>Scripts</h1>
     </div>
     <div class="cell">
         <table class="hover">
             <thead>
-                <tr><th>Name</th><th>Measurement</th><th>Reading</th><th>Last updated</th></tr>
+                <tr><th>Name</th><th>Last modified</th><th>Errors</th></tr>
             </thead>
             <tbody>
-                {{ range .Sensors }}
-                <tr class="row-hyperlink" data-href="/sensor?unit={{ .Unit }}&sensor={{ .Sensor }}">
+                {{ range .Scripts }}
+                <tr class="row-hyperlink" data-href="/script/edit?id={{ .Id }}">
                     <td>{{ .Name }}</td>
                     <td>{{ .MeasurementName }}</td>
                     <td>{{ .Reading }}{{ .MeasurementUnit }}</td>

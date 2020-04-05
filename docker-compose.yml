@@ -10,6 +10,7 @@ services:
             - auth
             - sensors
             - web
+            - scripting
     rabbitmq:
         ports:
             - "1883:1883"
@@ -43,6 +44,7 @@ services:
             - sessions
             - auth
             - sensors
+            - scripting
         command: web /go/src/app/configs/web.toml
         working_dir: /go/src/app/web
     sensors:
@@ -52,6 +54,20 @@ services:
             - mongodb
             - auth
         command: sensors /go/src/app/configs/sensors.toml
+    scripting:
+        build: ./
+        restart: always
+        links:
+            - mongodb
+            - auth
+        command: scripting /go/src/app/configs/scripting.toml
+    scriptexec:
+        build: ./
+        restart: always
+        links:
+            - mongodb
+            - rabbitmq
+        command: scriptexec /go/src/app/configs/scriptexec.toml
     auth:
         build: ./
         restart: always

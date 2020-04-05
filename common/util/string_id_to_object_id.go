@@ -2,7 +2,7 @@ package util
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-func StringIDToObjectID(ids []string) ([]primitive.ObjectID, err) {
+func StringIDToObjectID(ids []string) ([]primitive.ObjectID, error) {
 	var err error
 	objectIDs := make([]primitive.ObjectID, len(ids))
 

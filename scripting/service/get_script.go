@@ -13,6 +13,7 @@ import (
 
 func (service *ScriptingService) GetScript(ctx context.Context, req *proto.GetScriptRequest) (*proto.Script, error) {
 	scripts := service.db.Collection("scripts")
+	errors := service.db.Collection("script_errors")
 
 	_, perms, ok := auth.FromContext(ctx)
 	if !ok {
@@ -60,6 +61,7 @@ func (service *ScriptingService) GetScript(ctx context.Context, req *proto.GetSc
 	protoScript.Details.LastModified = script.LastModified
 	protoScript.Details.Name = script.Name
 	protoScript.Details.Subscriptions = script.Patterns
+	protoScript.Details.RecentErrorCount, err = errors.CountDocuments(ctx, bson.M{"script": script.ID, "timestamp": bson.M{"$gte": script.LastModified}})
 
 	return protoScript, nil
 }
