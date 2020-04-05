@@ -147,7 +147,7 @@ func AuthMiddleware(next httprouter.Handle, audience string, logic *business.Log
 }
 
 // GetToken retrieves a JSON Web Token from a HTTP context
-func GetToken(ctx context.Context) (*Session, bool) {
-	session, ok := ctx.Value(metaSession).(*Session)
-	return session, ok
+func GetToken(ctx context.Context) (*auth.Token, bool) {
+	token, ok := ctx.Value(metaToken).(*auth.Token)
+	return token, ok
 }

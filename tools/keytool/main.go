@@ -17,6 +17,7 @@ var commands = map[string]func([]string){
 	"pubinfo": pubInfo,
 	"priinfo": priInfo,
 	"gogen":   goGen,
+	"getpub":  getPub,
 }
 
 var curves = map[string]elliptic.Curve{
@@ -45,6 +46,7 @@ func printHelp(args []string) {
 	fmt.Println("Will's Go ECDSA Key Tool")
 	fmt.Println("Commands:")
 	fmt.Println("  newkey <curve> <private.der> [public.key]")
+	fmt.Println("  getpub <private.der> <public.key>")
 	fmt.Println("  pubinfo <public.key>")
 	fmt.Println("  priinfo <private.der>")
 	fmt.Println("  gogen <public.key> <package> <name> <file>")
@@ -151,6 +153,36 @@ func priInfo(args []string) {
 		fmt.Println("X:", priKey.X)
 		fmt.Println("Y:", priKey.Y)
 		fmt.Println("D:", priKey.D)
+	}
+}
+
+func getPub(args []string) {
+	if len(args) < 2 {
+		fmt.Printf("Usage: %s getpub <private.der> <public.key>", os.Args[0])
+	} else {
+		priDer, err := ioutil.ReadFile(args[0])
+		if err != nil {
+			fmt.Printf("Error reading private key")
+			return
+		}
+
+		priKey, err := x509.ParseECPrivateKey(priDer)
+		if err != nil {
+			fmt.Printf("Error parsing private key")
+			return
+		}
+
+		pubDer, err := x509.MarshalPKIXPublicKey(&priKey.PublicKey)
+		if err != nil {
+			fmt.Println("Error marshaling public key")
+			return
+		}
+
+		err = ioutil.WriteFile(args[1], pubDer, 0o555)
+		if err != nil {
+			fmt.Println("Error writing public key")
+			return
+		}
 	}
 }
 

@@ -8,6 +8,8 @@ message SensorInfo {
     string measurementunit = 5;
     bool hidden = 6;
     string site = 7;
+    double latitude = 8;
+    double longitude = 9;
 }
 
 message SensorData {
@@ -24,6 +26,8 @@ message GetSensorsRequest {
     string name = 1;
     bool includeHidden = 2;
     repeated string site = 3;
+    repeated string unit = 4;
+    repeated string sensor = 5;
 }
 
 message GetSensorReadingsRequest {
@@ -31,10 +35,24 @@ message GetSensorReadingsRequest {
     repeated string sensor = 2;
     int64 since = 3;
     repeated string site = 4;
+    bool ignoreHidden = 5;
+}
+
+message Field {
+    string name = 1;
+    string crop = 2;
+    repeated SensorInfo sensors = 3;
+}
+
+message GetFieldsRequest {
+    repeated string name = 1;
 }
 
 service SensorsService {
     rpc GetSensors(GetSensorsRequest) returns (stream SensorInfo);
     rpc GetSensorReadings(GetSensorReadingsRequest) returns (stream SensorData);
+    rpc GetLatestSensorReadings(GetSensorReadingsRequest) returns (stream SensorData);
     rpc UpdateSensor(SensorInfo) returns (SensorInfo);
+    rpc GetFields(GetFieldsRequest) returns (stream Field);
+    rpc UpdateField(Field) returns (Field);
 }

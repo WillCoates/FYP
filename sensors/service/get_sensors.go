@@ -43,6 +43,18 @@ func (service *SensorsService) GetSensors(req *proto.GetSensorsRequest, server p
 		query["name"] = req.Name
 	}
 
+	if len(req.Unit) > 0 {
+		query["unitid"] = bson.M{"$in": req.Unit}
+	}
+
+	if len(req.Sensor) > 0 {
+		query["info.sensor"] = bson.M{"$in": req.Sensor}
+	}
+
+	if !req.IncludeHidden {
+		query["hidden"] = false
+	}
+
 	sensors, err := service.logic.GetSensors(server.Context(), query, users...)
 	if err != nil {
 		return err
@@ -52,6 +64,8 @@ func (service *SensorsService) GetSensors(req *proto.GetSensorsRequest, server p
 		var info proto.SensorInfo
 		info.Name = sensor.Name
 		info.Unit = sensor.UnitID
+		info.Latitude = sensor.Latitude
+		info.Longitude = sensor.Longitude
 		info.Sensor = sensor.Info.Sensor
 		info.Measurementname = sensor.Info.Measurement
 		info.Measurementunit = sensor.Info.Units

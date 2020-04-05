@@ -1,0 +1,61 @@
+{{ define "content" }}
+<div class="grid-x small-up-1">
+    <div class="cell">
+        <h1>{{ .Sensor.Name }}</h1>
+    </div>
+</div>
+<div class="grid-x small-up-1 medium-up-2">
+    <div class="cell button-group">
+        <button type="button" class="button" data-open="editModal">Edit</button>
+    </div>
+    <form class="cell" method="GET">
+        <label>Since: <select name="since">
+            {{ with $data := . }}
+            {{ range $value, $name := .SinceNames }}
+            <option {{ if eq $name $data.Since }}selected{{ end }} value="{{ $name }}">{{ $name }}</option>
+            {{ end }}
+            {{ end }}
+        </select>
+        </label>
+        <input type="hidden" name="sensor" value="{{ .SensorName }}"/>
+        <input type="hidden" name="unit" value="{{ .Unit }}"/>
+        <input type="submit" class="button" value="Refresh" />
+    </form>
+</div>
+<div class="grid-x small-up-1">
+    <div class="cell">
+        {{ template "graph_area" .Graph }}
+    </div>
+</div>
+<form method="POST" class="reveal" id="editModal" data-reveal>
+    <h1>Edit sensor</h1>
+    <label>Name
+        <input type="text" name="name" value="{{ .Sensor.Name }}" required>
+    </label>
+    <label>Measurement name
+        <input type="text" name="measurementname" value="{{ .Sensor.Measurementname }}" required>
+    </label>
+    <label>Measurement unit
+        <input type="text" name="measurementunit" value="{{ .Sensor.Measurementunit }}" required>
+    </label>
+    <label>Field
+        <input type="text" name="site" value="{{ .Sensor.Site }}" required>
+    </label>
+    <label>Hidden
+        <input type="checkbox" name="hidden" {{ if .Sensor.Hidden }}checked{{ end }} required>
+    </label>
+    <label>Longitude
+        <input type="number" name="longitude" value="{{ .Sensor.Longitude }}" required>
+    </label>
+    <label>Latitude
+        <input type="number" name="latitude" value="{{ .Sensor.Latitude }}" required>
+    </label>
+    <input type="submit" name="submit" value="Edit" class="button">
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</form>
+{{ end }}
+{{ define "scripts" }}
+{{ template "graph_plotter" .Graph }}
+{{ end }}

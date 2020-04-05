@@ -1,0 +1,27 @@
+{{ define "graph_area" }}
+<div style="position: relative; height:12.5em; width:100%">
+    <canvas id="{{ .ID }}"></canvas>
+</div>
+{{ end }}
+{{ define "graph_plotter" }}
+<script>
+    var ctx = document.getElementById('{{ .ID }}').getContext('2d');
+    new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: {{ .Title }},
+                data: [{{ range .Data }}{x: {{ .Time }}, y: {{ .Value }} },{{ end }}],
+                showLine: true,
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time'
+                }]
+            },
+        },
+    });
+</script>
+{{ end }}

@@ -7,6 +7,7 @@ import (
 	"github.com/WillCoates/FYP/common/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (logic *Logic) GetSensorReadingsQuery(ctx context.Context, users []string, sensorQuery bson.M, since int64) (chan SensorReading, error) {
@@ -29,7 +30,10 @@ func (logic *Logic) GetSensorReadingsQuery(ctx context.Context, users []string, 
 	readingQuery["sensor"] = bson.M{"$in": sensorIds}
 	readingQuery["timestamp"] = bson.M{"$gte": since}
 
-	result, err := readings.Find(ctx, readingQuery)
+	findOptions := options.Find()
+	findOptions.SetSort(bson.M{"timestamp": 1})
+
+	result, err := readings.Find(ctx, readingQuery, findOptions)
 	if err != nil {
 		return nil, err
 	}

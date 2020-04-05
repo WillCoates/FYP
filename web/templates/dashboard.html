@@ -1,11 +1,39 @@
 {{ define "content" }}
-<div class="grid-x grid-margin-x small-up-1 medium-up-2 large-up-4">
-    <div class="cell"><h2>Sensors</h2></div>
-    <div class="cell"><h2>Sites</h2></div>
-    <div class="cell"><h2>Average Temperature</h2></div>
-    <div class="cell"><h2>Average Humidity</h2></div>
+<div class="grid-x grid-margin-x small-up-1 large-up-2">
+    <div class="cell">
+        <h5>Sensors</h5>
+    </div>
+    <div class="cell">
+        <h5>Sites</h5>
+    </div>
+    <div class="cell">
+        <h5>Average Temperature</h5>
+        <div style="position: relative; height:12.5em; width:100%">
+            <canvas id="avgTemperature"></canvas>
+        </div>
+    </div>
+    <div class="cell">
+        <h5>Average Humidity</h5>
+        <!--<div style="position: relative; height:12.5em; width:100%">
+            <canvas id="avgHumidity"></canvas>
+        </div>-->
+        {{ template "graph_area" .AverageHumidity }}
+    </div>
 </div>
 {{ end }}
 {{ define "scripts" }}
-<!-- TODO -->
+<!--<script>
+var ctx = document.getElementById('avgHumidity').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["01/01", "02/01", "03/01", "04/01", "05/01", "06/01", "07/01"],
+        datasets: [{
+            label: 'Average Humidity',
+            data: [12, 19, 3, 5, 2, 3, 7],
+        }]
+    }
+});
+</script>-->
+{{ template "graph_plotter" .AverageHumidity }}
 {{ end }}

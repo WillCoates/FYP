@@ -1,1 +1,4 @@
-dashboard = ["base.html", "navpage.html", "dashboard.html"]
+dashboard = ["base.html", "navpage.html", "graphutil.html", "dashboard.html"]
+sensor = ["base.html", "navpage.html", "graphutil.html", "sensor.html"]
+sensor_list = ["base.html", "navpage.html", "sensor_list.html"]
+sensor_add =  ["base.html", "navpage.html", "sensor_add.html"]

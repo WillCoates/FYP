@@ -1,0 +1,28 @@
+{{ define "content" }}
+<div class="grid-x small-up-1">
+    <div class="cell">
+        <h1>Add Sensor</h1>
+    </div>
+    <div class="cell">
+        <p>SmartFarm automatically configures sensors as they are connected to the service.</p>
+        <p>In order to connect a sensor to the service, configure it with the following details.</p>
+        <p>IP Address: fyp.willtc.uk</p>
+        <p>Port number: 1883</p>
+        <p>Topic template: {{ .UserID }}/sensor/#MESHLIUM#/#SENSOR#</p>
+        <p>Message template:</p>
+        <pre>
+{
+    "msg_id": "#ID#",
+    "unit_id": "#ID_WASP#",
+    "sensor": "#SENSOR#",
+    "value": "#VALUE#",
+    "timestamp": #TS('U')
+}
+        </pre>
+        <p>Password: jwt</p>
+        <p>Username: Shown below, please log in again if required</p>
+    </div>
+    <iframe class="cell" src="/sensors/token" height="320px">
+    </iframe>
+</div>
+{{ end }}

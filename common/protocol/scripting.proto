@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+message ScriptDetails {
+    string id = 1;
+    string name = 2;
+    repeated string subscriptions = 3;
+    int64 last_modified = 4;
+}
+
+message Script {
+    ScriptDetails details = 1;
+    string source = 2;
+}
+
+message ScriptError {
+    ScriptDetails script = 1;
+    string message = 2;
+}
+
+message GetScriptsRequest {
+    string name = 1;
+}
+
+message GetScriptRequest {
+    string id = 1;
+}
+
+message GetScriptErrorsRequest {
+    repeated string id = 1;
+    int64 since = 2;
+}
+
+service ScriptingService {
+    rpc GetScripts(GetScriptsRequest) returns (stream ScriptDetails);
+    rpc GetScript(GetScriptRequest) returns (Script);
+    rpc AddScript(Script) returns (Script);
+    rpc UpdateScript(Script) returns (Script);
+    rpc GetScriptErrors(GetScriptErrorsRequest) returns (stream ScriptError);
+}

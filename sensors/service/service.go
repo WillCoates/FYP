@@ -6,6 +6,7 @@ import (
 )
 
 type SensorsService struct {
+	proto.UnimplementedSensorsServiceServer
 	logic *business.Logic
 }
 
@@ -14,5 +15,3 @@ func NewSensorsService(logic *business.Logic) *SensorsService {
 	service.logic = logic
 	return service
 }
-
-var _ proto.SensorsServiceServer = (*SensorsService)(nil)

@@ -37,6 +37,8 @@ func (service *SensorsService) UpdateSensor(ctx context.Context, req *proto.Sens
 	var sensor model.Sensor
 	sensor.Name = req.GetName()
 	sensor.UnitID = req.GetUnit()
+	sensor.Latitude = req.GetLatitude()
+	sensor.Longitude = req.GetLongitude()
 	sensor.Info = &info
 	sensor.Site, err = service.logic.GetSiteId(users, req.Site, true)
 	if err != nil {

@@ -1,0 +1,37 @@
+{{ define "content" }}
+<div class="grid-x small-up-1">
+    <div class="cell">
+        <h1>Sensors</h1>
+    </div>
+    <div class="cell">
+        <table class="hover">
+            <thead>
+                <tr><th>Name</th><th>Measurement</th><th>Reading</th><th>Last updated</th></tr>
+            </thead>
+            <tbody>
+                {{ range .Sensors }}
+                <tr class="row-hyperlink" data-href="/sensor?unit={{ .Unit }}&sensor={{ .Sensor }}">
+                    <td>{{ .Name }}</td>
+                    <td>{{ .MeasurementName }}</td>
+                    <td>{{ .Reading }}{{ .MeasurementUnit }}</td>
+                    <td>{{ .LastUpdated }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ end }}
+{{ define "scripts" }}
+<script>
+    "use strict";
+    // Enable hyperlinks for table rows
+    $(function() {
+        let $row = $(".row-hyperlink");
+        $row.css("cursor", "pointer");
+        $row.click(function() {
+            window.location = $row.data("href");
+        });
+    });
+</script>
+{{ end }}

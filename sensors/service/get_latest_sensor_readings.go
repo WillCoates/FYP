@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service *SensorsService) GetSensorReadings(req *proto.GetSensorReadingsRequest, server proto.SensorsService_GetSensorReadingsServer) error {
+func (service *SensorsService) GetLatestSensorReadings(req *proto.GetSensorReadingsRequest, server proto.SensorsService_GetLatestSensorReadingsServer) error {
 	_, perms, ok := auth.FromContext(server.Context())
 	if !ok {
 		return ErrNoToken
@@ -64,7 +64,7 @@ func (service *SensorsService) GetSensorReadings(req *proto.GetSensorReadingsReq
 		sensorQuery["hidden"] = false
 	}
 
-	readings, err := service.logic.GetSensorReadingsQuery(server.Context(), users, sensorQuery, req.Since)
+	readings, err := service.logic.GetLatestSensorReadingsQuery(server.Context(), users, sensorQuery, req.Since)
 	if err != nil {
 		return err
 	}
