@@ -74,7 +74,7 @@ func Sensor(templateManager *framework.TemplateManager, logic *business.Logic) h
 
 		grpcClient, err := grpc.Dial(logic.Config["sensor_service"], grpc.WithInsecure())
 		if err != nil {
-			log.Println(err)
+			log.Println("Sensor failed to connect to GRPC", err)
 			w.WriteHeader(500)
 			return
 		}
@@ -86,17 +86,18 @@ func Sensor(templateManager *framework.TemplateManager, logic *business.Logic) h
 		var sensorReq sensors.GetSensorsRequest
 		sensorReq.Sensor = []string{data.SensorName}
 		sensorReq.Unit = []string{data.Unit}
+		sensorReq.IncludeHidden = true
 
 		sensorsResult, err := sensorService.GetSensors(ctx, &sensorReq)
 		if err != nil {
-			log.Println(err)
+			log.Println("Sensor failed to get sensor info", err)
 			w.WriteHeader(500)
 			return
 		}
 
 		data.Sensor, err = sensorsResult.Recv()
 		if err != nil {
-			log.Println(err)
+			log.Println("Sensor failed to read sensor info", err)
 			w.WriteHeader(500)
 			return
 		}
@@ -111,7 +112,7 @@ func Sensor(templateManager *framework.TemplateManager, logic *business.Logic) h
 
 		readings, err := sensorService.GetSensorReadings(ctx, &readingReq)
 		if err != nil {
-			log.Println(err)
+			log.Println("Sensor failed to get readings", err)
 			w.WriteHeader(500)
 			return
 		}
@@ -121,7 +122,7 @@ func Sensor(templateManager *framework.TemplateManager, logic *business.Logic) h
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				log.Println(err)
+				log.Println("Sensor failed to read readings", err)
 				w.WriteHeader(500)
 				return
 			}
@@ -204,6 +205,16 @@ func SensorPostback(templateManager *framework.TemplateManager, logic *business.
 				w.WriteHeader(500)
 				return
 			}
+
+		case "Delete":
+			var deletedSensorInfo sensors.SensorInfo
+			deletedSensorInfo.Sensor = r.URL.Query().Get("sensor")
+			deletedSensorInfo.Unit = r.URL.Query().Get("unit")
+
+			sensorService.DeleteSensor(ctx, &deletedSensorInfo)
+
+			http.Redirect(w, r, "/sensors", http.StatusSeeOther)
+			return
 		}
 		pageRender(w, r, nil)
 	}

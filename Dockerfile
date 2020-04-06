@@ -1,6 +1,7 @@
 FROM golang:1.13.6-alpine
 
-RUN apk add --no-cache gcc musl-dev
+RUN apk add --no-cache gcc musl-dev tzdata
+ENV TZ Europe/London
 
 WORKDIR /go/src/app
 COPY . .

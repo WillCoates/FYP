@@ -13,7 +13,6 @@ import (
 func (logic *Logic) GetFields(ctx context.Context, users []string, fieldQuery bson.M) (chan model.SensorSite, error) {
 	var fields = logic.db.Collection("sites")
 	var err error
-	readingQuery := make(bson.M)
 
 	userIds := make([]primitive.ObjectID, len(users))
 
@@ -27,7 +26,7 @@ func (logic *Logic) GetFields(ctx context.Context, users []string, fieldQuery bs
 	fieldQuery = util.CloneMapStringIface(fieldQuery)
 	fieldQuery["user"] = bson.M{"$in": userIds}
 
-	result, err := fields.Find(ctx, readingQuery)
+	result, err := fields.Find(ctx, fieldQuery)
 	if err != nil {
 		return nil, err
 	}

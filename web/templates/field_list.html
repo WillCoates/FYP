@@ -1,24 +1,21 @@
-{{ define "title" }}Scripts{{ end }}
+{{ define "title" }}Fields{{ end }}
 {{ define "content" }}
 <div class="grid-x small-up-1">
     <div class="cell">
-        <h1>Scripts</h1>
+        <h1>Fields</h1>
     </div>
-    <div class="cell button-group">
-        <a type="button" class="button success" href="/scripts/add">New Script</a>
-        <a type="button" class="button secondary" href="/scripts/errors">Error Log</a>
-    </div>
+</div>
+<div class="grid-x small-up-1">
     <div class="cell">
         <table class="hover">
             <thead>
-                <tr><th>Name</th><th>Last modified</th><th>Errors</th></tr>
+                <tr><th>Name</th><th>Crops</th></tr>
             </thead>
             <tbody>
-                {{ range .Scripts }}
-                <tr class="row-hyperlink" data-href="/scripts/edit?id={{ .ID }}">
+                {{ range .Fields }}
+                <tr class="row-hyperlink" data-href="/fields/view?name={{ .Name }}">
                     <td>{{ .Name }}</td>
-                    <td>{{ .LastModified }}</td>
-                    <td>{{ .ErrorCount }}</td>
+                    <td>{{ .Crop }}</td>
                 </tr>
                 {{ end }}
             </tbody>

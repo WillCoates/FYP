@@ -1,13 +1,24 @@
-{{ define "title" }}Sensors{{ end }}
+{{ define "title" }}{{ .Field.Name }}{{ end }}
 {{ define "content" }}
 <div class="grid-x small-up-1">
     <div class="cell">
-        <h1>Sensors</h1>
+        <h1>{{ .Field.Name }}</h1>
     </div>
+</div>
+<div class="grid-x">
     <div class="cell button-group">
-        <a type="button" class="button success" href="/sensors/add">Add Sensor</a>
+        <button type="button" class="button alert" data-open="deleteModal">Delete</button>
     </div>
+</div>
+<div class="grid-x">
+    <form class="cell" method="POST">
+        <label>Crop <input type="text" name="crop" value="{{ .Field.Crop }}"/></label>
+        <input type="submit" name="submit" value="Update" class="button"/>
+    </form>
+</div>
+<div class="grid-x">
     <div class="cell">
+        <h2>Sensors</h2>
         <table class="hover">
             <thead>
                 <tr><th>Name</th><th>Measurement</th><th>Reading</th><th>Last updated</th></tr>
@@ -25,6 +36,15 @@
         </table>
     </div>
 </div>
+<form method="POST" class="reveal" id="deleteModal" data-reveal>
+    <h1>Delete field</h1>
+    <p>This action can not be undone. Are you sure you want to delete this field?</p>
+    <input type="submit" name="submit" value="Delete" class="button alert">
+    <button class="button secondary" data-close>Cancel</button>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</form>
 {{ end }}
 {{ define "scripts" }}
 <script>

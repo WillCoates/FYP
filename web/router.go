@@ -47,5 +47,50 @@ func CreateRouter(logic *business.Logic, sessionManager *framework.SessionManage
 			framework.AuthMiddleware(controllers.SensorToken(templateManager, logic), "sensor", logic),
 			sessionManager))
 
+	router.GET("/fields",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.FieldList(templateManager, logic), "web", logic),
+			sessionManager))
+
+	router.GET("/fields/view",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.Field(templateManager, logic), "web", logic),
+			sessionManager))
+
+	router.POST("/fields/view",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.FieldPostback(templateManager, logic), "web", logic),
+			sessionManager))
+
+	router.GET("/scripts",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.ScriptList(templateManager, logic), "web", logic),
+			sessionManager))
+
+	router.GET("/scripts/errors",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.ScriptErrors(templateManager, logic), "web", logic),
+			sessionManager))
+
+	router.GET("/scripts/add",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.ScriptAdd(templateManager, logic), "web", logic),
+			sessionManager))
+
+	router.POST("/scripts/add",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.ScriptAddPostback(templateManager, logic), "web", logic),
+			sessionManager))
+
+	router.GET("/scripts/edit",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.ScriptEdit(templateManager, logic), "web", logic),
+			sessionManager))
+
+	router.POST("/scripts/edit",
+		framework.SessionMiddleware(
+			framework.AuthMiddleware(controllers.ScriptEditPostback(templateManager, logic), "web", logic),
+			sessionManager))
+
 	return router
 }

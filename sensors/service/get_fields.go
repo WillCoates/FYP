@@ -27,7 +27,7 @@ func (service *SensorsService) GetFields(req *proto.GetFieldsRequest, server pro
 	query := make(bson.M)
 
 	if len(req.Name) > 0 {
-		query["site"] = req.Name
+		query["name"] = bson.M{"$in": req.Name}
 	}
 
 	fields, err := service.logic.GetFields(server.Context(), users, query)
@@ -37,8 +37,8 @@ func (service *SensorsService) GetFields(req *proto.GetFieldsRequest, server pro
 
 	for field := range fields {
 		var info proto.Field
-		info.Name = info.Name
-		info.Crop = info.Crop
+		info.Name = field.Name
+		info.Crop = field.Crop
 		service.logic.GetSensors(server.Context(), bson.M{"site": field.ID}, users...)
 		server.Send(&info)
 	}

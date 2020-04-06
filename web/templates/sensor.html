@@ -8,6 +8,7 @@
 <div class="grid-x small-up-1 medium-up-2">
     <div class="cell button-group">
         <button type="button" class="button" data-open="editModal">Edit</button>
+        <button type="button" class="button alert" data-open="deleteModal">Delete</button>
     </div>
     <form class="cell" method="GET">
         <label>Since: <select name="since">
@@ -40,10 +41,10 @@
         <input type="text" name="measurementunit" value="{{ .Sensor.Measurementunit }}" required>
     </label>
     <label>Field
-        <input type="text" name="site" value="{{ .Sensor.Site }}" required>
+        <input type="text" name="site" value="{{ .Sensor.Site }}">
     </label>
     <label>Hidden
-        <input type="checkbox" name="hidden" {{ if .Sensor.Hidden }}checked{{ end }} required>
+        <input type="checkbox" name="hidden" {{ if .Sensor.Hidden }}checked{{ end }}>
     </label>
     <label>Longitude
         <input type="number" name="longitude" value="{{ .Sensor.Longitude }}" required>
@@ -52,6 +53,16 @@
         <input type="number" name="latitude" value="{{ .Sensor.Latitude }}" required>
     </label>
     <input type="submit" name="submit" value="Edit" class="button">
+    <button class="button secondary" data-close>Cancel</button>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</form>
+<form method="POST" class="reveal" id="deleteModal" data-reveal>
+    <h1>Delete sensor</h1>
+    <p>This action can not be undone. Are you sure you want to delete this sensor?</p>
+    <input type="submit" name="submit" value="Delete" class="button alert">
+    <button class="button secondary" data-close>Cancel</button>
     <button class="close-button" data-close aria-label="Close modal" type="button">
         <span aria-hidden="true">&times;</span>
     </button>

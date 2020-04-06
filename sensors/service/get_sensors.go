@@ -52,7 +52,7 @@ func (service *SensorsService) GetSensors(req *proto.GetSensorsRequest, server p
 	}
 
 	if !req.IncludeHidden {
-		query["hidden"] = false
+		query["info.hidden"] = false
 	}
 
 	sensors, err := service.logic.GetSensors(server.Context(), query, users...)

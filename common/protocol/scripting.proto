@@ -16,6 +16,7 @@ message Script {
 message ScriptError {
     ScriptDetails script = 1;
     string message = 2;
+    int64 timestamp = 3;
 }
 
 message GetScriptsRequest {

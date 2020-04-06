@@ -1,33 +1,15 @@
-{{ define "title" }}{{ .Script.Details.Name }}{{ end }}
+{{ define "title" }}New script{{ end }}
 {{ define "head" }}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css" integrity="sha256-vZ3SaLOjnKO/gGvcUWegySoDU6ff33CS5i9ot8J9Czk=" crossorigin="anonymous" />
 {{ end }}
 {{ define "content" }}
 <div class="grid-x small-up-1">
     <div class="cell">
-        <h1>{{ .Script.Details.Name }}</h1>
-    </div>
-</div>
-<div class="grid-x">
-    <div class="cell button-group">
-        <button type="button" class="button alert" data-open="deleteModal">Delete</button>
-    </div>
-</div>
-<div class="grid-x">
-    <div class="cell">
-        <h2>Errors</h2>
-        <div style="max-height: 15em; overflow-y: scroll; border: 1px solid black;">
-            {{ range .Errors }}
-            <div>{{ .Timestamp }} {{ .Message }}</div>
-            {{ else }}
-            <div>No errors since last update</div>
-            {{ end }}
-        </div>
+        <h1>New script</h1>
     </div>
 </div>
 <div class="grid-x">
     <form class="cell" method="POST">
-        <h2>Edit</h2>
         <label>Name <input name="name" type="text" value="{{ .Script.Details.Name }}"/></label>
         <label>Subscriptions (one per line) <textarea rows="5" name="subs">
 {{- range .Script.Details.Subscriptions -}}
@@ -35,18 +17,9 @@
 {{ end -}}
         </textarea></label>
         <label>Source <textarea name="src" id="src">{{ .Script.Source }}</textarea></label>
-        <input type="submit" name="submit" value="Edit" class="button"/>
+        <input type="submit" name="submit" value="Add" class="button"/>
     </form>
 </div>
-<form method="POST" class="reveal" id="deleteModal" data-reveal>
-    <h1>Delete script</h1>
-    <p>This action can not be undone. Are you sure you want to delete this script?</p>
-    <input type="submit" name="submit" value="Delete" class="button alert">
-    <button class="button secondary" data-close>Cancel</button>
-    <button class="close-button" data-close aria-label="Close modal" type="button">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</form>
 {{ end }}
 {{ define "scripts" }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js" integrity="sha256-id5Qk/MwQJxgNlDFDpVymUuReXfTUZiaQKb8arrddQM=" crossorigin="anonymous"></script>

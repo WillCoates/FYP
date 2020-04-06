@@ -1,24 +1,20 @@
-{{ define "title" }}Scripts{{ end }}
+{{ define "title" }}Script Errors{{ end }}
 {{ define "content" }}
 <div class="grid-x small-up-1">
     <div class="cell">
-        <h1>Scripts</h1>
-    </div>
-    <div class="cell button-group">
-        <a type="button" class="button success" href="/scripts/add">New Script</a>
-        <a type="button" class="button secondary" href="/scripts/errors">Error Log</a>
+        <h1>Script Errors</h1>
     </div>
     <div class="cell">
         <table class="hover">
             <thead>
-                <tr><th>Name</th><th>Last modified</th><th>Errors</th></tr>
+                <tr><th>Script Name</th><th>Timestamp</th><th>Message</th></tr>
             </thead>
             <tbody>
-                {{ range .Scripts }}
-                <tr class="row-hyperlink" data-href="/scripts/edit?id={{ .ID }}">
+                {{ range .Errors }}
+                <tr class="row-hyperlink" data-href="/scripts/edit?id={{ .ScriptID }}">
                     <td>{{ .Name }}</td>
-                    <td>{{ .LastModified }}</td>
-                    <td>{{ .ErrorCount }}</td>
+                    <td>{{ .Timestamp }}</td>
+                    <td>{{ .Message }}</td>
                 </tr>
                 {{ end }}
             </tbody>

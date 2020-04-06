@@ -61,7 +61,7 @@ func (service *SensorsService) GetLatestSensorReadings(req *proto.GetSensorReadi
 	}
 
 	if req.IgnoreHidden {
-		sensorQuery["hidden"] = false
+		sensorQuery["info.hidden"] = false
 	}
 
 	readings, err := service.logic.GetLatestSensorReadingsQuery(server.Context(), users, sensorQuery, req.Since)

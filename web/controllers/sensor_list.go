@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/WillCoates/FYP/common/protocol/sensors"
 	"github.com/WillCoates/FYP/web/business"
@@ -30,8 +29,6 @@ type sensorListSensorData struct {
 type sensorListData struct {
 	Sensors chan sensorListSensorData
 }
-
-const timeFormat = "15:04:05 Mon 02 Jan 2006"
 
 func SensorList(templateManager *framework.TemplateManager, logic *business.Logic) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -90,7 +87,6 @@ func SensorList(templateManager *framework.TemplateManager, logic *business.Logi
 					}
 
 					var sensorData sensorListSensorData
-					lastUpdated := time.Unix(reading.Timestamp, 0)
 
 					sensorData.Name = reading.UnitName
 					sensorData.Reading = reading.Reading
@@ -98,7 +94,7 @@ func SensorList(templateManager *framework.TemplateManager, logic *business.Logi
 					sensorData.MeasurementUnit = reading.Measurementunit
 					sensorData.Sensor = reading.Sensor
 					sensorData.Unit = reading.Unit
-					sensorData.LastUpdated = lastUpdated.Local().Format(timeFormat)
+					sensorData.LastUpdated = formatTime(reading.Timestamp)
 
 					data.Sensors <- sensorData
 				}

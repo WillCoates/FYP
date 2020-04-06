@@ -55,4 +55,6 @@ service SensorsService {
     rpc UpdateSensor(SensorInfo) returns (SensorInfo);
     rpc GetFields(GetFieldsRequest) returns (stream Field);
     rpc UpdateField(Field) returns (Field);
+    rpc DeleteSensor(SensorInfo) returns (SensorInfo);
+    rpc DeleteField(Field) returns (Field);
 }

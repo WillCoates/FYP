@@ -18,7 +18,10 @@
         options: {
             scales: {
                 xAxes: [{
-                    type: 'time'
+                    type: 'time',
+                    time: {
+                        parser: moment.unix
+                    }
                 }]
             },
         },
