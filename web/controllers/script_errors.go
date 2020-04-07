@@ -54,6 +54,7 @@ func ScriptErrors(templateManager *framework.TemplateManager, logic *business.Lo
 		// Get sensors
 		var errorsRequest scripting.GetScriptErrorsRequest
 		errorsRequest.Since = time.Now().Unix() - 24*60*60
+		errorsRequest.Limit = 500
 
 		data.Errors = make(chan scriptErrorsErrorData)
 

@@ -24,6 +24,9 @@ func (service *ScriptingService) GetScriptErrors(req *proto.GetScriptErrorsReque
 
 	opts := options.Find()
 	opts.SetSort(bson.M{"timestamp": -1})
+	if req.Limit > 0 {
+		opts.SetLimit(int64(req.Limit))
+	}
 
 	cur, err := errors.Find(srv.Context(), query, opts)
 	if err != nil {

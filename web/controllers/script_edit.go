@@ -69,6 +69,7 @@ func ScriptEdit(templateManager *framework.TemplateManager, logic *business.Logi
 		var errorRequest scripting.GetScriptErrorsRequest
 		errorRequest.Id = []string{script.Details.Id}
 		errorRequest.Since = script.Details.LastModified
+		errorRequest.Limit = 100
 
 		errors, err := scriptService.GetScriptErrors(ctx, &errorRequest)
 		if err != nil {
