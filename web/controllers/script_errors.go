@@ -82,7 +82,7 @@ func ScriptErrors(templateManager *framework.TemplateManager, logic *business.Lo
 					var errorData scriptErrorsErrorData
 
 					errorData.ScriptID = scriptError.Script.Id
-					errorData.Name = scriptError.Message
+					errorData.Name = scriptError.Script.Name
 					errorData.Message = scriptError.Message
 					errorData.Timestamp = formatTime(scriptError.Timestamp)
 
